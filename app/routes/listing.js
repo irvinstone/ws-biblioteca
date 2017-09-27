@@ -9,7 +9,12 @@ router.get('/', function(req, res, next) {
   });
 });
 router.post('/', function(req, res, next) {
-    models.Listing.create(req.body).then(function (result) {
+    models.listing.create(req.body,{
+        include: [{
+            association: models.listing.User
+
+        }]
+    }).then(function (result) {
         res.json(result)
     });
 });

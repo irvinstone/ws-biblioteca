@@ -33,8 +33,6 @@ var server = http.createServer(app);
 /**
  * Sync models and schema every time we start the app
  */
-models.User.hasMany(models.Listing);
-models.Listing.belongsTo(models.User);
 
 models.sequelize.sync().then(function() {
     server.listen(port);
