@@ -4,16 +4,15 @@ var models = require('../models');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  models.user.findAll().then(function (users) {
+  models.personal.findAll().then(function (users) {
      res.json(users)
   });
 });
 router.post('/', function(req, res, next) {
     console.log(req.body);
-    models.user.create(req.body,{
+    models.personal.create(req.body,{
         include: [{
-            model: models.user.listing
-
+            association: models.personal.usuario
         }]
     }).then(function (result) {
         res.json(result)

@@ -14,30 +14,35 @@ if (config.use_env_variable) {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// fs
-//   .readdirSync(__dirname)
-//   .filter(function(file) {
-//     return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-//   })
-//   .forEach(function(file) {
-//     var model = sequelize['import'](path.join(__dirname, file));
-//     db[model.name] = model;
-//   });
-//
-// // db.user.hasMany(db.listing);
-// db.listing.user = db.listing.belongsTo(db.user);
+fs
+  .readdirSync(__dirname)
+  .filter(function(file) {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(function(file) {
+    var model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
 
-const Product = sequelize.define('product', {
-    title: Sequelize.STRING
-});
-const User = sequelize.define('user', {
-    first_name: Sequelize.STRING,
-    last_name: Sequelize.STRING
-});
 
-Product.User = Product.belongsTo(User);
-db.listing = Product;
-db.user = User;
+/**
+ * Relaciones
+ */
+db.usuario.alumno = db.usuario.belongsTo(db.alumno);
+db.usuario.personal = db.usuario.belongsTo(db.personal);
+
+db.alumno.usuario = db.alumno.hasOne(db.usuario);
+db.alumno.prestamos = db.alumno.hasMany(db.prestamo);
+
+db.personal.usuario = db.personal.hasOne(db.usuario);
+db.personal.prestamos = db.personal.hasMany(db.prestamo);
+
+db.libro.prestamos = db.libro.hasMany(db.prestamo);
+
+db.prestamo.alumno = db.prestamo.belongsTo(db.alumno);
+db.prestamo.personal = db.prestamo.belongsTo(db.personal);
+db.prestamo.libro = db.prestamo.belongsTo(db.libro);
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
