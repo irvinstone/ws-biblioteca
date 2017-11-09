@@ -10,6 +10,7 @@ var usuario = require('./routes/usuarioController');
 var alumno = require('./routes/alumnoController');
 var personal = require('./routes/personalController');
 var libro = require('./routes/libroController');
+var prestamo = require('./routes/prestamoController');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/usuario', usuario);
 app.use('/alumno', alumno);
 app.use('/libro', libro);
 app.use('/personal', personal);
+app.use('/prestamo', prestamo);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
