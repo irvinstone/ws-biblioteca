@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": "root",
+    "password": "1234",
     "database": "database_development",
-    "host": "db",
+    "host": "localhost",
     "dialect": "mysql",
     "timestamps": false
   },
@@ -20,5 +20,9 @@
     "database": "database_production",
     "host": "db",
     "dialect": "mysql"
+  },
+  "token":{
+    "secret":"secret",
+    "tiempoExpiracion":6000
   }
 }

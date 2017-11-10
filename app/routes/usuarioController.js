@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+var config = require('../config/config.json');
+var crypto = require('crypto');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -9,7 +11,7 @@ router.get('/', function(req, res, next) {
   });
 });
 router.post('/', function(req, res, next) {
-    console.log(req.body);
+    req.body.password = crypto.createHash('sha256').update(req.body.password + config.token.secret).digest('hex');
     models.usuario.create(req.body).then(function (result) {
         res.json(result)
     });
