@@ -5,7 +5,7 @@ var async   = require('async');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  models.prestamo.findAll().then(function (response) {
+  models.prestamo.findAll({where:req.query}).then(function (response) {
      res.json(response);
   });
 });
@@ -36,17 +36,73 @@ router.post('/', function(req, res, next) {
         if(err){
             res.json(err)
         }else {
-            models.prestamo.create().then(function (prestamo) {
-                prestamo.setAlumno(results[0]);
-                prestamo.setLibro(results[1]);
-                prestamo.setPersonal(results[2]);
-                prestamo.save().then(function (prestamo) {
-                    res.json(prestamo);
-                }).catch(function (err) {
-                    res.json({err:err});
+            return models.sequelize.transaction(function (t) {
+                const alumno = results[0];
+                const libro = results[1];
+                const personal = results[2];
+                return models.prestamo.create({
+                    fechaReserva:Date.now(),
+                    alumnoCodigo:alumno.codigo,
+                    libroIsbn:libro.isbn,
+                    personalIdPersonal:personal.idPersonal
+                },{transaction: t}).then(function (prestamo) {
+                    return alumno.update({estado:"operando"},{transaction: t}).then(function (alumno) {
+                        return libro.update({estado:"reservado"},{transaction: t})
+                    });
                 })
+            }).then(function (result) {
+                res.json(result);
+            }).catch(function (err) {
+                res.json(err);
             });
         }
+    });
+});
+router.patch('/entregar', function(req, res, next) {
+    models.prestamo.findOne({where:{idPrestamo:req.body.idPrestamo}}).then(function (prestamo) {
+        if(prestamo){
+            prestamo.getAlumno().then(function (alumno) {
+                prestamo.getLibro().then(function (libro) {
+                    return models.sequelize.transaction(function (t) {
+                        return prestamo.update({
+                            fechaEntrega:Date.now(),
+                            estado:"entregado"
+                        },{transaction: t}).then(function (prestamo) {
+                                return libro.update({estado:"prestado"},{transaction: t})
+                        })
+                    }).then(function (result) {
+                        res.json(result);
+                    }).catch(function (err) {
+                        res.json(err);
+                    });
+                });
+            });
+
+        }else res.json("prestamo no encontrado");
+    });
+});
+router.patch('/devolver', function (req, res, next) {
+    models.prestamo.findOne({where: {idPrestamo: req.body.idPrestamo}}).then(function (prestamo) {
+        if (prestamo) {
+            prestamo.getAlumno().then(function (alumno) {
+                prestamo.getLibro().then(function (libro) {
+                    return models.sequelize.transaction(function (t) {
+                        return prestamo.update({
+                            fechaDevolucion: Date.now(),
+                            estado         : "devuelto"
+                        }, {transaction: t}).then(function (prestamo) {
+                            return alumno.update({estado: "activo"}, {transaction: t}).then(function (alumno) {
+                                return libro.update({estado: "disponible"}, {transaction: t})
+                            });
+                        })
+                    }).then(function (result) {
+                        res.json(result);
+                    }).catch(function (err) {
+                        res.json(err);
+                    });
+                });
+            });
+        } else res.json("prestamo no encontrado");
     });
 });
 

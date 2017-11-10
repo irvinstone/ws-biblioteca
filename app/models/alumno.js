@@ -23,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
         estado: {
-            type: DataTypes.ENUM('activo','suspendido','inactivo'),
+            type: DataTypes.ENUM('activo','operando','suspendido','inactivo'),
             allowNull: false,
             defaultValue: "activo"
         }
@@ -31,5 +31,6 @@ module.exports = function (sequelize, DataTypes) {
     },{
         timestamp:false
     });
+    Alumno.prototype.cambiarEstado = function (estado) {this.estado = estado};
     return Alumno;
 };

@@ -4,7 +4,7 @@ var models = require('../models');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  models.libro.findAll().then(function (users) {
+  models.libro.findAll({where:req.query}).then(function (users) {
      res.json(users)
   });
 });
