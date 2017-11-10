@@ -12,21 +12,21 @@ router.get('/', function(req, res, next) {
 router.post('/', function(req, res, next) {
     async.parallel([
         function(callback) {
-            models.alumno.findById(req.body.codigo).then(function (alumno) {
+            models.alumno.findOne({where:{codigo:req.body.codigo,estado:"activo"}}).then(function (alumno) {
                 if(alumno){
                     callback(null,alumno);
                 }else callback("alumno no encontrado");
             });
         },
         function(callback) {
-            models.libro.findById(req.body.isbn).then(function (libro) {
+            models.libro.findOne({where:{isbn:req.body.isbn,estado:"disponible"}}).then(function (libro) {
                 if(libro){
-                    callback("fuck ur selve",libro);
+                    callback(null,libro);
                 }else callback("libro no encontrado");
             });
         },
         function (callback) {
-            models.personal.findById(req.body.idPersonal).then(function (personal) {
+            models.personal.findOne({where:{idPersonal:req.body.idPersonal,estado:"activo"}}).then(function (personal) {
                 if(personal){
                     callback(null,personal);
                 }else callback("personal no encontrado");
@@ -35,7 +35,18 @@ router.post('/', function(req, res, next) {
     ], function(err, results) {
         if(err){
             res.json(err)
-        }else res.json(results);
+        }else {
+            models.prestamo.create().then(function (prestamo) {
+                prestamo.setAlumno(results[0]);
+                prestamo.setLibro(results[1]);
+                prestamo.setPersonal(results[2]);
+                prestamo.save().then(function (prestamo) {
+                    res.json(prestamo);
+                }).catch(function (err) {
+                    res.json({err:err});
+                })
+            });
+        }
     });
 });
 

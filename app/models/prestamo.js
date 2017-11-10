@@ -18,6 +18,11 @@ module.exports = function (sequelize, DataTypes) {
         fechaDevolucion: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        estado: {
+            type: DataTypes.ENUM('reservado','entregado','devuelto'),
+            allowNull: false,
+            defaultValue: "reservado"
         }
     });
     return Prestamo;

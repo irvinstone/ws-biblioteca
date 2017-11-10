@@ -19,14 +19,14 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: true
         },
         estado: {
-            type: DataTypes.ENUM('Disponible','Reservado','Prestado'),
+            type: DataTypes.ENUM('disponible','reservado','prestado','baja'),
             allowNull: false,
-            defaultValue: "Disponible"
+            defaultValue: "disponible"
         },
         tipo: {
-            type: DataTypes.ENUM('Fisico','Digital'),
+            type: DataTypes.ENUM('fisico','digital'),
             allowNull: false,
-            defaultValue: "Fisico"
+            defaultValue: "fisico"
         },
         link: {
             type: DataTypes.STRING(255),

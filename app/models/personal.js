@@ -30,6 +30,11 @@ module.exports = function (sequelize, DataTypes) {
         cargo: {
             type: DataTypes.ENUM('Administrador','Personal'),
             allowNull: false
+        },
+        estado: {
+            type: DataTypes.ENUM('Activo','Suspendido','Inactivo'),
+            allowNull: false,
+            defaultValue: "Activo"
         }
     });
     return Personal;

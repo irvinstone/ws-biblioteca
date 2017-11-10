@@ -19,8 +19,13 @@ module.exports = function (sequelize, DataTypes) {
             allowNull: false
         },
         genero: {
-            type: DataTypes.ENUM('Femenino','Masculino'),
+            type: DataTypes.ENUM('femenino','masculino'),
             allowNull: false
+        },
+        estado: {
+            type: DataTypes.ENUM('activo','suspendido','inactivo'),
+            allowNull: false,
+            defaultValue: "activo"
         }
 
     },{
