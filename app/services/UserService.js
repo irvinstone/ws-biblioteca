@@ -1,6 +1,5 @@
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
-var usuarioService = require('./usuarioService');
 var config = require('../config/config.json');
 var models = require('../models');
 
@@ -9,8 +8,7 @@ function AuthenticationService() {
 
 function generarToken(data, callback) {
     models.usuario.findOne({where: {email: data.email}}).then(function (usuario) {
-        if (err) return callback(err);
-        else if (usuario) {
+        if (usuario) {
             if (usuario.password == crypto.createHash('sha256').update(data.password + config.token.secret).digest('hex')) {
                 jwt.sign({
                     body: {id: usuario.id, email: usuario.email}
@@ -42,7 +40,7 @@ function decodificarToken(token, callback) {
     jwt.verify(token, config.token.secret, function (err, data) {
         if (err) return callback("token invalido o expirado");
         else {
-            models.usuario.findOne({where: {email: data.email}}).then(function (usuario) {
+            models.usuario.findOne({where: {email: data.body.email}}).then(function (usuario) {
                 if (usuario) return callback(null, usuario);
                 else return callback("este usuario no existe o esta suspendido")
             });
@@ -72,8 +70,9 @@ AuthenticationService.prototype.tieneAcceso = function (headers, callback) {
         if (err) {
             return callback(err);
         } else {
-            decodificarToken(token, function (response) {
-                return callback(null, response)
+            decodificarToken(token, function (err,response) {
+                if(err)callback(err);
+                else return callback(null, response)
             })
         }
     });

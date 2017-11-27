@@ -23,5 +23,11 @@ router.post('/auth', function(req, res, next) {
         else res.json(success);
     })
 });
+router.post('/access', function(req, res, next) {
+    usuarioService.tieneAcceso(req,function (err,success) {
+        if(err)res.json(err);
+        else res.json(success);
+    })
+});
 
 module.exports = router;
