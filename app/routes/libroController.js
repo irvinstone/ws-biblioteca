@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
 var models = require('../models');
+var authMiddleware = require('./authMiddleware');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+// router.post('/crear', paperworkk.accept(validations.templates.crear),authMiddleware.ensureAthenticated, function(req, res, next) {
+router.get('/',authMiddleware.ensureAthenticated, function(req, res, next) {
   models.libro.findAll({where:req.query}).then(function (result) {
      res.json(result)
   });
