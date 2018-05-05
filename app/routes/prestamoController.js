@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
      res.json(response);
   });
 });
-router.post('/', function(req, res, next) {
+router.post('/reservar',authMiddleware.ensureAthenticated, function(req, res, next) {
     async.parallel([
         function(callback) {
             models.alumno.findOne({where:{codigo:req.body.codigo,estado:"activo"}}).then(function (alumno) {
