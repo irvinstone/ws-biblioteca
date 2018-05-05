@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var models = require('../models');
 var async   = require('async');
+var authMiddleware = require('./authMiddleware');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
