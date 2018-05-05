@@ -9,7 +9,12 @@ module.exports = function (sequelize, DataTypes) {
             type:DataTypes.STRING,
             unique: true
         },
-        password: DataTypes.STRING
+        password: DataTypes.STRING,
+        tipo: {
+            type: DataTypes.ENUM('personal','alumno'),
+            allowNull: false,
+            defaultValue: "alumno"
+        }
     });
     return Usuario;
 };
